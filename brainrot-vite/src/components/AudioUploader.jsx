@@ -47,12 +47,27 @@ const AudioUploader = () => {
         accept="audio/*"
         onChange={handleFileChange}
         style={{
-          display: "block",
-          margin: "0 auto 10px auto",
-          padding: "5px",
-          fontSize: "14px",
+          display: "none",
         }}
+        id="audio-upload"
       />
+      <label
+        htmlFor="audio-upload"
+        style={{
+          display: "inline-block",
+          padding: "10px 20px",
+          backgroundColor: "#38b2ac",
+          color: "#fff",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+          fontSize: "14px",
+          textAlign: "center",
+          marginBottom: "10px",
+        }}
+      >
+        Choose Audio File
+      </label>
       {error && (
         <p
           style={{
@@ -76,21 +91,22 @@ const AudioUploader = () => {
           {(audioFile.size / 1024 / 1024).toFixed(2)} MB)
         </p>
       )}
-      <button
-        onClick={handleUpload}
-        disabled={!audioFile}
-        style={{
-          padding: "10px 20px",
-          backgroundColor: audioFile ? "#007BFF" : "#ccc",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          cursor: audioFile ? "pointer" : "not-allowed",
-          fontSize: "14px",
-        }}
-      >
-        Upload Audio
-      </button>
+      {audioFile && (
+        <button
+          onClick={handleUpload}
+          style={{
+            padding: "10px 20px",
+            backgroundColor: "#38b2ac",
+            color: "#fff",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontSize: "14px",
+          }}
+        >
+          Upload Audio
+        </button>
+      )}
     </div>
   );
 };

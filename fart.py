@@ -1,137 +1,81 @@
-import numpy as np
-import librosa
-import soundfile as sf
+import os
+from spleeter.separator import Separator
+from pydub import AudioSegment, silence
 
 # -------------------------------
-# Helper Functions
+# 1. Separate the song into stems using Spleeter
 # -------------------------------
+input_audio = "input_audio/HBD.wav"  # Replace with your song file
+output_dir = "output_audio"
+separator = Separator('spleeter:2stems')  # Using 2 stems: vocals and accompaniment
+separator.separate_to_file(input_audio, output_dir)
 
-def dominant_frequency_fft(signal, sr):
+# Assume the output structure is:
+# separated_output/<song_basename>/vocals.wav
+song_basename = os.path.splitext(os.path.basename(input_audio))[0]
+vocals_path = os.path.join(output_dir, song_basename, "vocals.wav")
+
+# -------------------------------
+# 2. Load the vocal track and detect segments (approximate words)
+# -------------------------------
+vocals = AudioSegment.from_file(vocals_path)
+# Adjust these parameters based on your file:
+min_silence_len = 200      # minimum silence in ms to consider a break (tweak as needed)
+silence_thresh = vocals.dBFS - 16  # silence threshold relative to the vocal level
+nonsilent_ranges = silence.detect_nonsilent(vocals, 
+                                            min_silence_len=min_silence_len, 
+                                            silence_thresh=silence_thresh, 
+                                            seek_step=1)
+
+# -------------------------------
+# 3. Load and trim the replacement sound
+# -------------------------------
+replacement_sound = AudioSegment.from_file("bruh.wav")
+
+def trim_silence(audio, silence_thresh=-40, chunk_size=10):
     """
-    Compute the dominant frequency of a signal using FFT.
-    Ignores the DC component (0 Hz).
+    Trims silence from the beginning and end of an AudioSegment.
     """
-    N = len(signal)
-    if N == 0:
-        return 0
-    fft_vals = np.fft.rfft(signal)
-    fft_mag = np.abs(fft_vals)
-    freqs = np.fft.rfftfreq(N, 1/sr)
-    # Skip DC component and get the frequency with maximum amplitude
-    if len(fft_mag) > 1:
-        idx = np.argmax(fft_mag[1:]) + 1
+    # Trim leading silence
+    start_trim = 0
+    while start_trim < len(audio) and audio[start_trim:start_trim+chunk_size].dBFS < silence_thresh:
+        start_trim += chunk_size
+
+    # Trim trailing silence
+    end_trim = len(audio)
+    while end_trim - chunk_size > 0 and audio[end_trim-chunk_size:end_trim].dBFS < silence_thresh:
+        end_trim -= chunk_size
+
+    return audio[start_trim:end_trim]
+
+# Trim the replacement sound to remove low-volume (silent) parts
+replacement_sound = trim_silence(replacement_sound, silence_thresh=-40, chunk_size=10)
+
+# -------------------------------
+# 4. Create a new audio track with replaced segments
+# -------------------------------
+# Create a silent track matching the length of the original vocal track.
+output_audio = AudioSegment.silent(duration=len(vocals))
+
+# For each detected vocal segment, replace it with the replacement sound adjusted to the same duration.
+for start, end in nonsilent_ranges:
+    segment_duration = end - start  # duration in milliseconds
+
+    # If the replacement sound is longer than needed, trim it;
+    # if it’s too short, loop it to cover the duration.
+    if len(replacement_sound) > segment_duration:
+        segment = replacement_sound[:segment_duration]
     else:
-        idx = 0
-    return freqs[idx]
+        # Loop the replacement sound to extend its duration
+        repeats = segment_duration // len(replacement_sound) + 1
+        segment = replacement_sound * repeats
+        segment = segment[:segment_duration]
 
-def shift_fart(fart_data, sr, target_pitch, base_pitch):
-    """
-    Pitch-shift the fart sample so that its dominant frequency matches the target_pitch.
-    """
-    # Calculate semitone difference: n_steps = 12 * log2(target/base)
-    if target_pitch <= 0 or base_pitch <= 0:
-        n_steps = 0
-    else:
-        n_steps = 12 * np.log2(target_pitch / base_pitch)
-    shifted = librosa.effects.pitch_shift(fart_data, sr=sr, n_steps=n_steps)
-    return shifted
+    # Overlay the adjusted replacement sound onto the output track at the correct position.
+    output_audio = output_audio.overlay(segment, position=start)
 
 # -------------------------------
-# Load Audio Files
+# 5. Export the final output
 # -------------------------------
-# Load the birthday song and fart sample ensuring the same sample rate.
-birthday_file = "input_audio/HBD.wav"    # Replace with your birthday song file
-fart_file = "bruh.wav"            # Replace with your fart sample file
-
-audio_data, sr = librosa.load(birthday_file, sr=None)
-print("Loaded birthday song with sample rate:", sr)
-
-fart_data, sr_fart = librosa.load(fart_file, sr=sr)
-print("Loaded fart sample with sample rate:", sr)
-fart_data, _ = librosa.effects.trim(fart_data, top_db=20)
-# -------------------------------
-# Compute Base Pitch of Fart Sample using FFT
-# -------------------------------
-base_pitch = dominant_frequency_fft(fart_data, sr)
-print("Base pitch of fart sample:", base_pitch)
-
-# -------------------------------
-# Analyze Pitch Contour of the Birthday Song
-# -------------------------------
-# Extract pitch estimates and their corresponding times.
-pitches, voiced_flags, voiced_probs = librosa.pyin(
-    audio_data,
-    fmin=librosa.note_to_hz('C2'),
-    fmax=librosa.note_to_hz('C7')
-)
-times = librosa.times_like(pitches, sr=sr)
-print("Pitch tracking completed on birthday song.")
-
-# -------------------------------
-# Dynamic Segmentation Based on Pitch Changes
-# -------------------------------
-# Define a threshold (in Hz) to detect a significant change in pitch.
-pitch_threshold = 20  # Adjust this threshold as needed
-
-segments = []
-start_time = times[0]
-prev_pitch = pitches[0]
-
-# Loop over the pitch contour to detect boundaries.
-for i in range(1, len(pitches)):
-    current_pitch = pitches[i]
-    # If the current pitch is unvoiced, or the change exceeds the threshold, mark a segment boundary.
-    if np.isnan(current_pitch) or np.isnan(prev_pitch) or abs(current_pitch - prev_pitch) > pitch_threshold:
-        end_time = times[i]
-        segments.append((start_time, end_time))
-        start_time = times[i]
-        prev_pitch = current_pitch
-    else:
-        prev_pitch = current_pitch
-
-# Append the final segment.
-segments.append((start_time, times[-1]))
-print("Number of dynamic segments:", len(segments))
-
-# -------------------------------
-# Process Each Segment and Build Final Audio
-# -------------------------------
-final_audio = np.array([], dtype=np.float32)
-
-for seg in segments:
-    seg_start, seg_end = seg
-    start_sample = int(seg_start * sr)
-    end_sample = int(seg_end * sr)
-    segment_data = audio_data[start_sample:end_sample]
-    
-    if len(segment_data) == 0:
-        continue
-
-    # Use FFT to compute the dominant frequency for this segment.
-    target_pitch = dominant_frequency_fft(segment_data, sr)
-    
-    # Pitch-shift the fart sample to match the segment's target pitch.
-    shifted_fart = shift_fart(fart_data, sr, target_pitch, base_pitch)
-    
-    # Time-stretch/compress the shifted fart sample to match the segment duration.
-    target_samples = len(segment_data)
-    if target_samples == 0:
-        continue
-    rate = len(shifted_fart) / target_samples
-    adjusted_fart = librosa.effects.time_stretch(shifted_fart, rate=rate)
-    
-    # Ensure the adjusted segment is exactly the correct length.
-    if len(adjusted_fart) > target_samples:
-        adjusted_fart = adjusted_fart[:target_samples]
-    elif len(adjusted_fart) < target_samples:
-        adjusted_fart = np.pad(adjusted_fart, (0, target_samples - len(adjusted_fart)), mode='constant')
-    
-    # Append this processed segment.
-    final_audio = np.concatenate([final_audio, adjusted_fart])
-
-# -------------------------------
-# Save the Final Output
-# -------------------------------
-output_file = "output_dynamic_fart_version.wav"
-sf.write(output_file, final_audio, sr)
-print("Output saved to", output_file)
+output_audio.export("output_replaced.wav", format="wav")
+print("Processing complete! Output saved as 'output_replaced.wav'")

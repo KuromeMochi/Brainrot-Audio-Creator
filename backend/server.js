@@ -17,7 +17,7 @@ app.use(
   "/output-audio",
   express.static(path.join(__dirname, "createAudio", "output_audio"))
 );
-const condaPythonPath = "C:\\Users\\tigger\\miniconda3\\envs\\song\\python.exe";
+const condaPythonPath = "python"; // Adjust this to your conda Python path if needed
 
 // POST endpoint to process audio
 app.post("/process-audio", (req, res) => {
@@ -34,7 +34,7 @@ app.post("/process-audio", (req, res) => {
   // For Mac/Linux, might be: path.join(__dirname, 'venv', 'bin', 'python');
 
   // Path to the Python script
-  const scriptPath = path.join(__dirname, "createAudio", "testBackend.py");
+  const scriptPath = path.join(__dirname, "createAudio", "vocalSplitter.py");
   // get current date and time
   const date = new Date().toISOString().replace(/:/g, "-").split(".")[0];
   const pythonProcess = spawn(condaPythonPath, [

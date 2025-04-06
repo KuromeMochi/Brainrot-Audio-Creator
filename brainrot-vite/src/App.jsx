@@ -30,15 +30,15 @@ function App() {
     setSelectedEffect(effect);
   };
 
-  const fetchConvertedAudio = () => {
-    setIsLoading(true);
-    // Simulate API call with timeout
-    setTimeout(() => {
-      // Replace this with actual API call
-      setConvertedAudio(selectedAudio.url); // Using URL for demo, replace with actual converted audio
-      setIsLoading(false);
-    }, 3000);
-  };
+  // const fetchConvertedAudio = () => {
+  //   setIsLoading(true);
+  //   // Simulate API call with timeout
+  //   setTimeout(() => {
+  //     // Replace this with actual API call
+  //     setConvertedAudio(selectedAudio.url); // Using URL for demo, replace with actual converted audio
+  //     setIsLoading(false);
+  //   }, 3000);
+  // };
 
   const handleConvertAudio = async () => {
     if (!selectedAudio || !selectedEffect) {
@@ -53,7 +53,7 @@ function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           audio1: selectedAudio.file, // e.g. "/songs/peppapig.mp3"
-          audio2: selectedEffect.name, // e.g. "/sound_effects/perfect-fart.mp3"
+          audio2: selectedEffect.file, // e.g. "/sound_effects/perfect-fart.mp3"
         }),
       });
 

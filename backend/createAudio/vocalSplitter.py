@@ -7,6 +7,7 @@ from pydub import AudioSegment
 from pydub.playback import play
 import soundfile as sf
 import os
+import sys
 
 def split_audio(input_path, output_dir="createAudio/separated_audio"):
     """
@@ -34,7 +35,7 @@ def detect_voiced_pitch(vocal_path):
     times = librosa.times_like(f0, sr=sr)
     return f0, voiced_flag, times, sr
 
-def remix_with_effect(vocal_path, effect_path, instrumental_path=None, output_path="createAudio/remixed_output.wav"):
+def remix_with_effect(vocal_path, effect_path, instrumental_path=None, output_path="createAudio/output_audio/remixed_output.wav"):
     # Load vocal audio and detect pitch librosa
     y_vocal, sr = librosa.load(vocal_path, sr=None)
     f0, voiced_flag, _ = librosa.pyin(y_vocal, fmin=80, fmax=1000)
@@ -141,9 +142,14 @@ def remix_with_effect(vocal_path, effect_path, instrumental_path=None, output_pa
     print(f"Remix created at: {output_path}")
 
 if __name__ == "__main__":
-    parsed_filename = "peppapig.mp3"
-    filename_no_ext = os.path.splitext(parsed_filename)[0]
+    file1 = sys.argv[1]
+    file2 = sys.argv[2]
+    print(file1)
+    print(file2)
+    date = sys.argv[3]
+    # parsed_filename = f"{file1}.mp3"
+    # filename_no_ext = os.path.splitext(parsed_filename)[0]
     # input_audio = "createAudio/" + parsed_filename 
-    input_audio = parsed_filename  # uncomment when using a new audio
-    split_audio(input_audio) # uncomment when using a new audio
-    remix_with_effect("createAudio\separated_audio/" + filename_no_ext + "/vocals.wav", "sound_clips/perfect-fart.mp3", "createAudio\separated_audio/" + filename_no_ext + "/accompaniment.wav")
+    # input_audio = parsed_filename  # uncomment when using a new audio
+    # split_audio(input_audio) # uncomment when using a new audio
+    remix_with_effect("createAudio\separated_audio/" + file1 + "/vocals.wav", f"sound_clips/{file2}.mp3", "createAudio\separated_audio/" + file1 + "/accompaniment.wav", output_path=f"createAudio/output_audio/{date}.wav")

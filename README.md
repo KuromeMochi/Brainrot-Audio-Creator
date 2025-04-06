@@ -2,7 +2,7 @@
 The Brainrot Audio Creator allows you to take an audio file of a song and replace the lyrics with a goofy sound effect to create a fun, brainrot-inspired remix. This tool is perfect for those who enjoy creating hilarious audio clips for their favourite apps like Tiktok or Instagram Reels. This project consists of a simple HTML, CSS and JS frontend and a Python backend. The backend consists of packages such as Spleeter by Deezer, librosa and pydub to allow us to separate the lyrics from the instrumentals before processing them.
 
 <div align="center">
-  <img src="READMEassets/brainrotcreateimg2.PNG" alt="Upload Interface" width="60%"/>
+  <img src="READMEassets/brainrotcreateimg3.PNG" alt="Upload Interface" width="60%"/>
 </div>
 
 ## Features

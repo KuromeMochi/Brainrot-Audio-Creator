@@ -1,112 +1,219 @@
 import React, { useState } from "react";
 
-const AudioUploader = () => {
-  const [audioFile, setAudioFile] = useState(null);
-  const [error, setError] = useState("");
-  const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+const AudioUploader = ({ onAudioSelected, onEffectSelected }) => {
+  const [selectedAudio, setSelectedAudio] = useState(null);
+  const [audioPlayer, setAudioPlayer] = useState(null); // State to manage the audio player
+  const [selectedEffect, setSelectedEffect] = useState(null); // State to manage the selected sound effect
+  const [effectPlayer, setEffectPlayer] = useState(null); // State to manage the sound effect player
+  const audioFiles = [
+    { name: "Peppa Pig", url: "/songs/peppapig.mp3" },
+    { name: "Audio 2", url: "/audio2.mp3" },
+    { name: "Audio 3", url: "/audio3.mp3" },
+  ];
+  const soundEffects = [
+    { name: "Fart", url: "/sound_effects/perfect-fart.mp3" },
+    { name: "Laughter", url: "/laughter.mp3" },
+    { name: "Buzzer", url: "/buzzer.mp3" },
+  ];
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file && file.type.startsWith("audio/")) {
-      if (file.size > MAX_FILE_SIZE) {
-        setAudioFile(null);
-        setError("File size exceeds the 50MB limit.");
-      } else {
-        setAudioFile(file);
-        setError("");
-      }
+  const handleSelectAudio = (audio) => {
+    setSelectedAudio(audio);
+    onAudioSelected(audio); // Pass the selected audio to the parent component
+    if (audioPlayer) {
+      audioPlayer.pause(); // Stop any currently playing audio
+    }
+    setAudioPlayer(new Audio(audio.url)); // Create a new audio player
+  };
+
+  const handleSelectEffect = (effect) => {
+    setSelectedEffect(effect);
+    onEffectSelected(effect); // Pass the selected effect to the parent component
+    if (effectPlayer) {
+      effectPlayer.pause(); // Stop any currently playing audio
+    }
+    setEffectPlayer(new Audio(effect.url)); // Create a new audio player
+  };
+
+  const handlePlaySoundEffect = () => {
+    if (selectedEffect && effectPlayer) {
+      effectPlayer.currentTime = 0; // Start from the beginning
+      effectPlayer.play();
+      console.log("Playing:", selectedEffect.name);
+
+      // Stop playback after 5 seconds
+      setTimeout(() => {
+        effectPlayer.pause();
+        effectPlayer.currentTime = 0; // Reset playback to the beginning
+        console.log("Sound effect sample ended");
+      }, 3000);
     } else {
-      setAudioFile(null);
-      setError("Please select a valid audio file.");
+      console.log("No sound effect selected");
     }
   };
 
-  const handleUpload = () => {
-    if (audioFile) {
-      console.log("Uploading:", audioFile.name);
-      // Add upload logic here
+  const handlePlayAudio = () => {
+    if (selectedAudio && audioPlayer) {
+      audioPlayer.currentTime = 0; // Start from the beginning
+      audioPlayer.play();
+      console.log("Playing:", selectedAudio.name);
+
+      // Stop playback after 5 seconds
+      setTimeout(() => {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0; // Reset playback to the beginning
+        console.log("Audio sample ended");
+      }, 3000);
     } else {
-      console.log("No file selected");
+      console.log("No audio selected");
     }
   };
 
   return (
     <div
       style={{
-        maxWidth: "400px",
+        maxWidth: "700px",
         margin: "0 auto",
         textAlign: "center",
-        padding: "20px",
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-        backgroundColor: "#f9f9f9",
+        padding: "30px",
+        border: "1px solid #ddd",
+        borderRadius: "12px",
+        backgroundColor: "#fefefe",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
       }}
     >
-      <input
-        type="file"
-        accept="audio/*"
-        onChange={handleFileChange}
+      <h2 style={{ fontSize: "24px", color: "#2d3748", marginBottom: "20px" }}>
+        Select a Song
+      </h2>
+      <div
         style={{
-          display: "none",
-        }}
-        id="audio-upload"
-      />
-      <label
-        htmlFor="audio-upload"
-        style={{
-          display: "inline-block",
-          padding: "10px 20px",
-          backgroundColor: "#38b2ac",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-          fontSize: "14px",
-          textAlign: "center",
-          marginBottom: "10px",
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          gap: "15px",
+          marginBottom: "30px",
         }}
       >
-        Choose Audio File
-      </label>
-      {error && (
-        <p
-          style={{
-            color: "red",
-            fontWeight: "bold",
-            marginBottom: "10px",
-          }}
-        >
-          {error}
-        </p>
-      )}
-      {audioFile && (
-        <p
-          style={{
-            margin: "10px 0",
-            fontSize: "14px",
-            color: "#333",
-          }}
-        >
-          Selected file: {audioFile.name} (
-          {(audioFile.size / 1024 / 1024).toFixed(2)} MB)
-        </p>
-      )}
-      {audioFile && (
+        {audioFiles.map((audio) => (
+          <div
+            key={audio.name}
+            onClick={() => handleSelectAudio(audio)}
+            style={{
+              border:
+                selectedAudio?.name === audio.name
+                  ? "2px solid #38b2ac"
+                  : "1px solid #ddd",
+              borderRadius: "10px",
+              padding: "15px",
+              cursor: "pointer",
+              width: "160px",
+              textAlign: "center",
+              backgroundColor:
+                selectedAudio?.name === audio.name ? "#e6fffa" : "#fff",
+              transition: "background-color 0.3s, border-color 0.3s",
+            }}
+          >
+            <p
+              style={{ fontWeight: "bold", margin: "10px 0", color: "#2d3748" }}
+            >
+              {audio.name}
+            </p>
+          </div>
+        ))}
+      </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: "15px",
+          marginBottom: "30px",
+        }}
+      >
         <button
-          onClick={handleUpload}
+          onClick={handlePlayAudio}
+          disabled={!selectedAudio} // Disable if no audio is selected
           style={{
-            padding: "10px 20px",
-            backgroundColor: "#38b2ac",
+            padding: "12px 25px",
+            backgroundColor: selectedAudio ? "#38b2ac" : "#a0aec0",
             color: "#fff",
             border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "14px",
+            borderRadius: "6px",
+            cursor: selectedAudio ? "pointer" : "not-allowed",
+            fontSize: "16px",
+            transition: "background-color 0.3s",
           }}
+          onMouseOver={(e) =>
+            selectedAudio && (e.target.style.backgroundColor = "#319795")
+          }
+          onMouseOut={(e) =>
+            selectedAudio && (e.target.style.backgroundColor = "#38b2ac")
+          }
         >
-          Upload Audio
+          Preview
         </button>
-      )}
+      </div>
+      <h2 style={{ fontSize: "24px", color: "#2d3748", marginBottom: "20px" }}>
+        Select a Sound Effect
+      </h2>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          gap: "15px",
+          marginBottom: "30px",
+        }}
+      >
+        {soundEffects.map((effect) => (
+          <div
+            key={effect.name}
+            onClick={() => handleSelectEffect(effect)}
+            style={{
+              border:
+                selectedEffect?.name === effect.name
+                  ? "2px solid #38b2ac"
+                  : "1px solid #ddd",
+              borderRadius: "10px",
+              padding: "15px",
+              cursor: "pointer",
+              width: "160px",
+              textAlign: "center",
+              backgroundColor:
+                selectedEffect?.name === effect.name ? "#e6fffa" : "#fff",
+              transition: "background-color 0.3s, border-color 0.3s",
+            }}
+          >
+            <p
+              style={{ fontWeight: "bold", margin: "10px 0", color: "#2d3748" }}
+            >
+              {effect.name}
+            </p>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", justifyContent: "center", gap: "15px" }}>
+        <button
+          onClick={handlePlaySoundEffect}
+          disabled={!selectedEffect} // Disable if no sound effect is selected
+          style={{
+            padding: "12px 25px",
+            backgroundColor: selectedEffect ? "#38b2ac" : "#a0aec0",
+            color: "#fff",
+            border: "none",
+            borderRadius: "6px",
+            cursor: selectedEffect ? "pointer" : "not-allowed",
+            fontSize: "16px",
+            transition: "background-color 0.3s",
+          }}
+          onMouseOver={(e) =>
+            selectedEffect && (e.target.style.backgroundColor = "#319795")
+          }
+          onMouseOut={(e) =>
+            selectedEffect && (e.target.style.backgroundColor = "#38b2ac")
+          }
+        >
+          Preview
+        </button>
+      </div>
     </div>
   );
 };

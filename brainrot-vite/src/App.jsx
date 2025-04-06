@@ -8,6 +8,9 @@ import { Sparkles, Music, DownloadCloud, Mic } from "lucide-react";
 function App() {
   const [originalAudio, setOriginalAudio] = useState(null);
   const [convertedAudio, setConvertedAudio] = useState(null);
+  const [selectedAudio, setSelectedAudio] = useState(null);
+  const [selectedEffect, setSelectedEffect] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFileUpload = (file) => {
     setOriginalAudio(file);
@@ -19,9 +22,22 @@ function App() {
     // Implement audio upload to backend here
   };
 
+  const handleAudioSelected = (audio) => {
+    setSelectedAudio(audio);
+  };
+
+  const handleEffectSelected = (effect) => {
+    setSelectedEffect(effect);
+  };
+
   const fetchConvertedAudio = () => {
-    // Fetch converted audio from backend
-    setConvertedAudio(/* received audio from backend */);
+    setIsLoading(true);
+    // Simulate API call with timeout
+    setTimeout(() => {
+      // Replace this with actual API call
+      setConvertedAudio(selectedAudio.url); // Using URL for demo, replace with actual converted audio
+      setIsLoading(false);
+    }, 3000);
   };
 
   return (
@@ -34,16 +50,15 @@ function App() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        padding: "3rem 1rem",
         fontFamily: "sans-serif",
+        overflow: "hidden",
       }}
     >
       <div style={{ width: "100%", maxWidth: "48rem", textAlign: "center" }}>
         <h1
           style={{
-            fontSize: "3rem",
+            fontSize: "4rem",
             fontWeight: "800",
-            marginBottom: "1rem",
             background: "linear-gradient(to right, #38b2ac, #f6ad55)",
             WebkitBackgroundClip: "text",
             color: "transparent",
@@ -68,7 +83,11 @@ function App() {
         </p>
 
         <div style={{ marginBottom: "3rem" }}>
-          <AudioUploader onUpload={handleFileUpload} />
+          <AudioUploader
+            onUpload={handleFileUpload}
+            onAudioSelected={handleAudioSelected}
+            onEffectSelected={handleEffectSelected}
+          />
           <AudioRecorder onRecord={handleAudioRecorded} />
         </div>
 
@@ -95,25 +114,58 @@ function App() {
           </div>
         )}
 
-        <button
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            background: "linear-gradient(to right, #38b2ac, #f6ad55)",
-            color: "#fff",
-            fontWeight: "600",
-            padding: "0.75rem 2rem",
-            borderRadius: "9999px",
-            transition: "transform 0.2s, opacity 0.2s",
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-            cursor: "pointer",
-          }}
-          onClick={fetchConvertedAudio}
-        >
-          <Sparkles style={{ animation: "spin 2s linear infinite" }} /> Convert
-          Audio
-        </button>
+        <div style={{ position: "relative", margin: "2rem 0" }}>
+          <button
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              background:
+                selectedAudio && selectedEffect
+                  ? "linear-gradient(to right, #38b2ac, #f6ad55)"
+                  : "#e2e8f0",
+              color: selectedAudio && selectedEffect ? "#fff" : "#a0aec0",
+              fontWeight: "600",
+              padding: "0.75rem 2rem",
+              borderRadius: "9999px",
+              transition: "transform 0.2s, opacity 0.2s",
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              cursor:
+                selectedAudio && selectedEffect ? "pointer" : "not-allowed",
+              position: "relative",
+              overflow: "hidden",
+            }}
+            onClick={
+              selectedAudio && selectedEffect ? fetchConvertedAudio : null
+            }
+            disabled={!selectedAudio || !selectedEffect || isLoading}
+          >
+            {isLoading ? (
+              <>
+                <div
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: "100%",
+                    background:
+                      "linear-gradient(to right, transparent, rgba(255,255,255,0.5), transparent)",
+                    animation: "shimmer 1.5s infinite",
+                  }}
+                />
+                <span style={{ position: "relative", zIndex: 1 }}>
+                  Processing...
+                </span>
+              </>
+            ) : (
+              <>
+                <Sparkles style={{ animation: "spin 2s linear infinite" }} />
+                Convert Audio
+              </>
+            )}
+          </button>
+        </div>
 
         {convertedAudio && (
           <div style={{ marginTop: "3rem" }}>
@@ -159,6 +211,45 @@ function App() {
           </div>
         )}
       </div>
+
+      <style jsx>{`
+        @keyframes shimmer {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(100%);
+          }
+        }
+        @keyframes spin {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+        @keyframes pulse {
+          0% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.2);
+          }
+          100% {
+            transform: scale(1);
+          }
+        }
+        @keyframes bounce {
+          0%,
+          100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-5px);
+          }
+        }
+      `}</style>
     </div>
   );
 }

@@ -39,12 +39,25 @@ const AudioRecorder = () => {
 
   return (
     <div style={{ textAlign: "center", marginTop: "20px" }}>
+      <p
+        style={{
+          fontSize: "1.125rem",
+          color: "#4a5568",
+          marginBottom: "2.5rem",
+          lineHeight: "1.75",
+          maxWidth: "40rem",
+          margin: "0 auto",
+          textAlign: "center",
+        }}
+      >
+        Or if you think you can do better, record your own audio!
+      </p>
       <button
         onClick={isRecording ? stopRecording : startRecording}
         style={{
           padding: "10px 20px",
           fontSize: "16px",
-          backgroundColor: isRecording ? "#ff4d4d" : "#4caf50",
+          backgroundColor: isRecording ? "#ff4d4d" : "#38b2ac",
           color: "#fff",
           border: "none",
           borderRadius: "5px",

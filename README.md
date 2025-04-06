@@ -8,7 +8,7 @@ The Brainrot Audio Creator allows you to take an audio file of a song and replac
 ## Features
 
 - Upload any audio file from common file extensions (e.g., MP3, WAV, OGG)
-- Insert a pre-defined goofy sound effect into inplace of the lyrics.
+- Insert a pre-defined goofy sound effect inplace of the lyrics.
 - Output the transformed audio with the goofy sound replacing the selected sections.
 
 ## Installation

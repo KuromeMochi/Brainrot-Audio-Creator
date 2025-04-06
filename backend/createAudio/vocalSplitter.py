@@ -151,5 +151,5 @@ if __name__ == "__main__":
     # filename_no_ext = os.path.splitext(parsed_filename)[0]
     # input_audio = "createAudio/" + parsed_filename 
     # input_audio = parsed_filename  # uncomment when using a new audio
-    # split_audio(input_audio) # uncomment when using a new audio
+    split_audio(file1 + ".mp3") # uncomment when using a new audio
     remix_with_effect("createAudio\separated_audio/" + file1 + "/vocals.wav", f"sound_clips/{file2}.mp3", "createAudio\separated_audio/" + file1 + "/accompaniment.wav", output_path=f"createAudio/output_audio/{date}.wav")

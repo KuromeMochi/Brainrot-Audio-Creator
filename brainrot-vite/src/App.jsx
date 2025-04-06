@@ -1,8 +1,6 @@
 import { useState } from "react";
 import AudioUploader from "./components/AudioUploader";
-import AudioRecorder from "./components/AudioRecorder";
 import AudioPlayer from "./components/AudioPlayer";
-import ConvertedAudioDownloader from "./components/ConvertedAudioDownloader";
 import { Sparkles, Music, DownloadCloud, Mic } from "lucide-react";
 
 function App() {
@@ -15,11 +13,6 @@ function App() {
   const handleFileUpload = (file) => {
     setOriginalAudio(file);
     // Implement file upload to backend here
-  };
-
-  const handleAudioRecorded = (audioBlob) => {
-    setOriginalAudio(audioBlob);
-    // Implement audio upload to backend here
   };
 
   const handleAudioSelected = (audio) => {
@@ -122,7 +115,6 @@ function App() {
             onAudioSelected={handleAudioSelected}
             onEffectSelected={handleEffectSelected}
           />
-          <AudioRecorder onRecord={handleAudioRecorded} />
         </div>
 
         {originalAudio && (
@@ -221,27 +213,6 @@ function App() {
               Converted Audio
             </h2>
             <AudioPlayer audioSrc={convertedAudio} />
-            <ConvertedAudioDownloader audio={convertedAudio}>
-              <button
-                style={{
-                  marginTop: "1.5rem",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  border: "1px solid #e2e8f0",
-                  background: "#fff",
-                  color: "#2d3748",
-                  fontWeight: "500",
-                  padding: "0.5rem 1.25rem",
-                  borderRadius: "9999px",
-                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                  transition: "transform 0.2s, opacity 0.2s",
-                  cursor: "pointer",
-                }}
-              >
-                <DownloadCloud /> Download Audio
-              </button>
-            </ConvertedAudioDownloader>
           </div>
         )}
       </div>

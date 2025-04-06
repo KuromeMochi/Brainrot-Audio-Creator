@@ -40,6 +40,40 @@ function App() {
     }, 3000);
   };
 
+  const handleConvertAudio = async () => {
+    if (!selectedAudio || !selectedEffect) {
+      console.warn("Both an audio track and an effect must be selected.");
+      return;
+    }
+    setIsLoading(true);
+    try {
+      // Make the POST request to your Node.js backend
+      const response = await fetch("http://localhost:5000/process-audio", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          audio1: selectedAudio.file, // e.g. "/songs/peppapig.mp3"
+          audio2: selectedEffect.name, // e.g. "/sound_effects/perfect-fart.mp3"
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to process audio");
+      }
+
+      const data = await response.json();
+      console.log("Backend response:", data);
+      console.log("Converted audio URL:", data.fileUrl);
+      // data.fileUrl should be something like "/output-audio/converted.wav"
+      // Prepend the server base if needed, or just store it and let the <audio> tag do the rest
+      setConvertedAudio(`http://localhost:5000/${data.fileUrl}`);
+    } catch (error) {
+      console.error("Error processing audio:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div
       style={{
@@ -136,7 +170,7 @@ function App() {
               overflow: "hidden",
             }}
             onClick={
-              selectedAudio && selectedEffect ? fetchConvertedAudio : null
+              selectedAudio && selectedEffect ? handleConvertAudio : null
             }
             disabled={!selectedAudio || !selectedEffect || isLoading}
           >
@@ -186,7 +220,7 @@ function App() {
               />{" "}
               Converted Audio
             </h2>
-            <AudioPlayer audio={convertedAudio} />
+            <AudioPlayer audioSrc={convertedAudio} />
             <ConvertedAudioDownloader audio={convertedAudio}>
               <button
                 style={{

@@ -1,0 +1,11 @@
+# Ignore backend node_modules
+
+# Optional: ignore frontend node_modules too
+/frontend/node_modules/
+
+# Common ignores
+.env
+*.log
+.DS_Store
+venv/
+createAudio/output_audio/

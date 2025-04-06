@@ -6,9 +6,9 @@ const AudioUploader = ({ onAudioSelected, onEffectSelected }) => {
   const [selectedEffect, setSelectedEffect] = useState(null); // State to manage the selected sound effect
   const [effectPlayer, setEffectPlayer] = useState(null); // State to manage the sound effect player
   const audioFiles = [
-    { name: "Peppa Pig", url: "/songs/peppapig.mp3" },
-    { name: "Audio 2", url: "/audio2.mp3" },
-    { name: "Audio 3", url: "/audio3.mp3" },
+    { name: "Peppa Pig", url: "/songs/peppapig.mp3", file: "peppapig" },
+    { name: "Audio 2", url: "/audio2.mp3", file: "peppapig" },
+    { name: "Audio 3", url: "/audio3.mp3", file: "peppapig" },
   ];
   const soundEffects = [
     { name: "Fart", url: "/sound_effects/perfect-fart.mp3" },

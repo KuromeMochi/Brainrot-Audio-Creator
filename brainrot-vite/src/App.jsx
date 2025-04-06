@@ -93,7 +93,7 @@ function App() {
             margin: "0 auto",
           }}
         >
-          Brainrot Audio Converter
+          Brainrot Audio Creator
         </h1>
         <p
           style={{

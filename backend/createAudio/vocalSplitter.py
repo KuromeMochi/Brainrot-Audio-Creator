@@ -20,6 +20,7 @@ def split_audio(input_path, output_dir="createAudio/separated_audio"):
     print("Initializing Spleeter...")
     separator = Separator('spleeter:2stems')  # vocals + accompaniment
 
+    # input_path = r"C:\_Work\_Computer Science\University\Bath Hack\Brainrot-Audio-Creator\backend\createAudio\happy_birthday.mp3"  # uncomment when using a new audio
     print(f"Processing file: {input_path}")
     separator.separate_to_file(input_path, output_dir)
 
@@ -148,8 +149,9 @@ if __name__ == "__main__":
     print(file2)
     date = sys.argv[3]
     # parsed_filename = f"{file1}.mp3"
+    # parsed_filename = "createAudio/separated_audio/happy_birthday.mp3"
     # filename_no_ext = os.path.splitext(parsed_filename)[0]
     # input_audio = "createAudio/" + parsed_filename 
-    # input_audio = parsed_filename  # uncomment when using a new audio
-    split_audio(file1 + ".mp3") # uncomment when using a new audio
-    remix_with_effect("createAudio\separated_audio/" + file1 + "/vocals.wav", f"sound_clips/{file2}.mp3", "createAudio\separated_audio/" + file1 + "/accompaniment.wav", output_path=f"createAudio/output_audio/{date}.wav")
+    # input_audio = "createAudio/happy_birthday.mp3"  # uncomment when using a new audio
+    # split_audio(input_audio) # uncomment when using a new audio
+    remix_with_effect("createAudio\separated_audio/" + file1 + "/vocals.wav", f"sound_clips/{file2}.mp3", "createAudio\separated_audio/" + file1 + "/accompaniment.wav", output_path=f"createAudio/output_audio/output.wav")

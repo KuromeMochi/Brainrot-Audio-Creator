@@ -8,11 +8,11 @@ const AudioUploader = ({ onAudioSelected, onEffectSelected }) => {
   const audioFiles = [
     { name: "Peppa Pig", url: "/songs/peppapig.mp3", file: "peppapig" },
     {
-      name: "Aaaaa eeee iiiii",
-      url: "/songs/brainrot2.mp3",
-      file: "brainrot2",
+      name: "Shake it Off",
+      url: "/songs/shakeitoff.mp3",
+      file: "shakeitoff",
     },
-    { name: "Audio 3", url: "/audio3.mp3", file: "peppapig" },
+    { name: "Happy Birthday!", url: "/songs/happy_birthday.mp3", file: "happy_birthday" },
   ];
   const soundEffects = [
     {

@@ -41,6 +41,18 @@ The Brainrot Audio Creator allows you to take an audio file of a song and replac
    ```bash
    pip install -r requirements.txt
    ```
+### Run Locally
+
+1. **Run npm**
+  ```bash
+   npm run dev
+   ```
+
+2. **Run vocalSplitter.py to create file locally**
+
+  ```bash
+   backend\createAudio\vocalSplitter.py
+   ```
 
 ## Usage
 Simply upload your audio file when selecting the upload button. The lyrics to the audio will then be replaced by the sound effect, creating the brainrot audio for you to download!

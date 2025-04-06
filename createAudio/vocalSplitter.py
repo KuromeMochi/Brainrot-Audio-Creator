@@ -1,4 +1,3 @@
-# vocal_splitter.py
 import spleeter
 from spleeter.separator import Separator
 import librosa
@@ -36,7 +35,7 @@ def detect_voiced_pitch(vocal_path):
     return f0, voiced_flag, times, sr
 
 def remix_with_effect(vocal_path, effect_path, instrumental_path=None, output_path="createAudio/remixed_output.wav"):
-    # Load vocal audio and detect pitch
+    # Load vocal audio and detect pitch librosa
     y_vocal, sr = librosa.load(vocal_path, sr=None)
     f0, voiced_flag, _ = librosa.pyin(y_vocal, fmin=80, fmax=1000)
     times = librosa.times_like(f0, sr=sr)
@@ -46,7 +45,7 @@ def remix_with_effect(vocal_path, effect_path, instrumental_path=None, output_pa
     if len(effect_audio) < sr * 0.5:
         effect_audio = np.tile(effect_audio, 3)
 
-    # Prepare output buffer
+    # output buffer
     output_length = len(y_vocal)
     output_audio = np.zeros(output_length)
 
@@ -56,7 +55,7 @@ def remix_with_effect(vocal_path, effect_path, instrumental_path=None, output_pa
     base_pitch = 200.0        # reference pitch for shifting
     crossfade = 0.5          # seconds
 
-    # Group stable notes
+    # Group stable notes together
     notes = []
     current_note = None
 
@@ -130,22 +129,20 @@ def remix_with_effect(vocal_path, effect_path, instrumental_path=None, output_pa
         shifted *= gain
         output_audio[start_sample:mix_end] += shifted[:mix_end - start_sample]
 
-    # Normalize and optionally blend with instrumental
-    
-
     if instrumental_path:
         instrumental, _ = librosa.load(instrumental_path, sr=sr)
         min_len = min(len(output_audio), len(instrumental))
         output_audio = output_audio[:min_len] + instrumental[:min_len]
 
+    # Normalise audio to avoid huge peaks in freq
     #output_audio = output_audio / np.max(np.abs(output_audio))
 
     sf.write(output_path, output_audio, sr)
     print(f"Remix created at: {output_path}")
 
-
-# Example usage:
 if __name__ == "__main__":
-    input_audio = "createAudio/peppapig.mp3"  # Replace with your file path
-    #split_audio(input_audio)
-    remix_with_effect("createAudio\separated_audio/peppapig/vocals.wav", "sound_clips/perfect-fart.mp3", "createAudio\separated_audio/peppapig/accompaniment.wav")
+    parsed_filename = "peppapig.mp3"
+    filename_no_ext = os.path.splitext(parsed_filename)[0]
+    input_audio = "createAudio/" + parsed_filename 
+    #split_audio(input_audio) # uncomment when using a new audio
+    remix_with_effect("createAudio\separated_audio/" + filename_no_ext + "/vocals.wav", "sound_clips/perfect-fart.mp3", "createAudio\separated_audio/" + filename_no_ext + "/accompaniment.wav")

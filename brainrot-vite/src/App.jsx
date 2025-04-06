@@ -66,7 +66,7 @@ function App() {
       console.log("Converted audio URL:", data.fileUrl);
       // data.fileUrl should be something like "/output-audio/converted.wav"
       // Prepend the server base if needed, or just store it and let the <audio> tag do the rest
-      setConvertedAudio(`http://localhost:5000/${data.fileUrl}`);
+      setConvertedAudio("http://localhost:5000/output-audio/output.wav");
     } catch (error) {
       console.error("Error processing audio:", error);
     } finally {

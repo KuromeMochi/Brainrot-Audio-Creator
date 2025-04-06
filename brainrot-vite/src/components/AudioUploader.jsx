@@ -11,9 +11,9 @@ const AudioUploader = ({ onAudioSelected, onEffectSelected }) => {
     { name: "Audio 3", url: "/audio3.mp3", file: "peppapig" },
   ];
   const soundEffects = [
-    { name: "Fart", url: "/sound_effects/perfect-fart.mp3", file: "perfect-fart" },
-    { name: "Laughter", url: "/laughter.mp3" , file: "perfect-fart" },
-    { name: "Buzzer", url: "/buzzer.mp3", file: "perfect-fart"  },
+    { name: "Fart 1", url: "/sound_effects/perfect-fart.mp3", file: "perfect-fart" },
+    { name: "Fart 2", url: "sound_effects/dry-fart.mp3", file: "dry-fart" },  
+    { name: "Quack", url: "/sound_effects/quack_5.mp3" , file: "quack_5" },
   ];
 
   const handleSelectAudio = (audio) => {

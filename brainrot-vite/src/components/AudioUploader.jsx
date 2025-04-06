@@ -7,13 +7,21 @@ const AudioUploader = ({ onAudioSelected, onEffectSelected }) => {
   const [effectPlayer, setEffectPlayer] = useState(null); // State to manage the sound effect player
   const audioFiles = [
     { name: "Peppa Pig", url: "/songs/peppapig.mp3", file: "peppapig" },
-    { name: "Audio 2", url: "/audio2.mp3", file: "peppapig" },
+    {
+      name: "Aaaaa eeee iiiii",
+      url: "/songs/brainrot2.mp3",
+      file: "brainrot2",
+    },
     { name: "Audio 3", url: "/audio3.mp3", file: "peppapig" },
   ];
   const soundEffects = [
-    { name: "Fart", url: "/sound_effects/perfect-fart.mp3", file: "perfect-fart" },
-    { name: "Laughter", url: "/laughter.mp3" , file: "perfect-fart" },
-    { name: "Buzzer", url: "/buzzer.mp3", file: "perfect-fart"  },
+    {
+      name: "Fart",
+      url: "/sound_effects/perfect-fart.mp3",
+      file: "perfect-fart",
+    },
+    { name: "Laughter", url: "/laughter.mp3", file: "perfect-fart" },
+    { name: "Buzzer", url: "/buzzer.mp3", file: "perfect-fart" },
   ];
 
   const handleSelectAudio = (audio) => {

@@ -43,7 +43,12 @@ The Brainrot Audio Creator allows you to take an audio file of a song and replac
    ```
 ### Run Locally
 
-1. **Run npm in a terminal**
+1. **Run npm in a terminal**\
+    You may need to install the following dependencies:
+    ```bash
+   npm install vite
+    ```
+    Run:
     ```bash
    cd .\brainrot-vite
     ```
@@ -51,7 +56,12 @@ The Brainrot Audio Creator allows you to take an audio file of a song and replac
    npm run dev
     ```
 
-2. **Run Server in a new terminal**
+2. **Run server in a new terminal** \
+   You may need to install the following dependencies:
+    ```bash
+   npm i express cors
+    ```
+    Run:
     ```bash
    cd .\backend
     ```
